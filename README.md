@@ -3,7 +3,7 @@
 This is a collection of UI components used in the [Stripe Dashboard](https://itunes.apple.com/us/app/stripe-dashboard/id978516833?mt=8). Currently, it only contains one component, `MoneyTextField`, but there's more to come!
 
 ## Installation
-Cocoapods, Carthage, or just drag source files into your project. Swift 2 for now, Swift 3 in the fall.
+Cocoapods, Carthage, or just drag source files into your project. Swift 2 for now.
 
 ## Components
 ### MoneyTextField
