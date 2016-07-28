@@ -6,4 +6,4 @@ This is a collection of UI components used in the [Stripe Dashboard](https://itu
 
 MoneyTextField is a text field for handling money. It includes many customization options, and supports most currencies and locales.
 
-![MoneyTextField](https://raw.github.com/stripe/ios-dashboard-ui/master/gifs/MoneyTextField.gif)
+![MoneyTextField](https://raw.githubusercontent.com/stripe/ios-dashboard-ui/master/gifs/MoneyTextField.gif)
