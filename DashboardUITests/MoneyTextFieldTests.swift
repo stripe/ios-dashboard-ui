@@ -8,7 +8,7 @@
 
 import XCTest
 import FBSnapshotTestCase
-import DashboardUI
+import StripeDashboardUI
 
 class MoneyTextFieldTests: FBSnapshotTestCase {
     

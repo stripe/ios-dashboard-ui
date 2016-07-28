@@ -50,7 +50,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		96FA3F3F1D4A592C0045B6B9 /* DashboardUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DashboardUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		96FA3F3F1D4A592C0045B6B9 /* StripeDashboardUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StripeDashboardUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		96FA3F421D4A592C0045B6B9 /* DashboardUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DashboardUI.h; sourceTree = "<group>"; };
 		96FA3F441D4A592C0045B6B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		96FA3F711D4A5B0F0045B6B9 /* MoneyTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoneyTextField.swift; sourceTree = "<group>"; };
@@ -106,7 +106,7 @@
 		96FA3F401D4A592C0045B6B9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				96FA3F3F1D4A592C0045B6B9 /* DashboardUI.framework */,
+				96FA3F3F1D4A592C0045B6B9 /* StripeDashboardUI.framework */,
 				96FA3F771D4A5BDC0045B6B9 /* DashboardUIExample.app */,
 				96FA3FB51D4A5FE50045B6B9 /* DashboardUITests.xctest */,
 			);
@@ -175,7 +175,7 @@
 			);
 			name = DashboardUI;
 			productName = DashboardUI;
-			productReference = 96FA3F3F1D4A592C0045B6B9 /* DashboardUI.framework */;
+			productReference = 96FA3F3F1D4A592C0045B6B9 /* StripeDashboardUI.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		96FA3F761D4A5BDC0045B6B9 /* DashboardUIExample */ = {
@@ -448,7 +448,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.stripe.DashboardUI;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = StripeDashboardUI;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -466,7 +466,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.stripe.DashboardUI;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = StripeDashboardUI;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

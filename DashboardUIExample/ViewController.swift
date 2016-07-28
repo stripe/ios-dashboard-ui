@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import DashboardUI
+import StripeDashboardUI
 
 class ViewController: UIViewController {
 
