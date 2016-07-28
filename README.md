@@ -1,6 +1,6 @@
 # iOS Dashboard UI
 [![Travis](https://img.shields.io/travis/stripe/ios-dashboard-ui/master.svg?style=flat)](https://travis-ci.org/stripe/ios-dashboard-ui)
-[![CocoaPods](https://img.shields.io/cocoapods/v/StripeDashboardUI.svg?style=flat)](http://cocoapods.org/?q=author%3Astripe%20name%3AStripeDashboardUI)
+[![CocoaPods](https://img.shields.io/cocoapods/v/StripeDashboardUI.svg?style=flat)](http://cocoapods.org/pods/StripeDashboardUI)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![CocoaPods](https://img.shields.io/cocoapods/l/StripeDashboardUI.svg?style=flat)](https://github.com/stripe/ios-dashboard-ui/blob/master/LICENSE)
 [![CocoaPods](https://img.shields.io/cocoapods/p/StripeDashboardUI.svg?style=flat)](https://github.com/stripe/ios-dashboard-ui#)
