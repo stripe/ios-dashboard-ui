@@ -11,9 +11,11 @@ This is a collection of UI components used in the [Stripe Dashboard](https://itu
 * [Cocoapods](https://cocoapods.org/pods/StripeDashboardUI)
   * `pod "StripeDashboardUI"`
 * [Carthage](https://github.com/Carthage/Carthage#installing-carthage)
-* Manual: drag source files from the `DashboardUI` directory into your project.
+  * `github "stripe/ios-dashboard-ui"`
+* Manual
+  * drag source files from the `DashboardUI` directory into your project.
 
-Swift 2 for now.
+Swift 2 (for now)
 
 ## Components
 ### MoneyTextField
