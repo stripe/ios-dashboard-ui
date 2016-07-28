@@ -1,6 +1,4 @@
 language: objective-c
 osx_image: xcode7.3
-sudo: false
-xcode_project: DashboardUI.xcodeproj
-xcode_scheme: DashboardUI
-xcode_sdk: iphonesimulator
+script:
+- "./scripts/test_unit.sh"
