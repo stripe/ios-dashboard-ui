@@ -1,4 +1,6 @@
 language: objective-c
 osx_image: xcode7.3
+before_install:
+  - ./scripts/install_dependencies.sh
 script:
-- "./scripts/test_unit.sh"
+  - ./scripts/test_unit.sh
