@@ -9,18 +9,28 @@
 import UIKit
 
 @IBDesignable
-public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelegate {
+open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelegate {
     @IBInspectable
-    public var amount: UInt {
+    open var amount: UInt {
         get {
             var number = NSDecimalNumber(string: self.rawString, locale: self.locale)
-            if !self.isNoDecimalCurrency {
-                number = number.decimalNumberByMultiplyingByPowerOf10(self.superUnitPowerOf10)
+            if !self.currency.stp_isNoDecimalCurrency {
+                let handler = NSDecimalNumberHandler(roundingMode: .plain,
+                                                     scale: 0,
+                                                     raiseOnExactness: false,
+                                                     raiseOnOverflow: false,
+                                                     raiseOnUnderflow: false,
+                                                     raiseOnDivideByZero: false)
+                number = number.multiplying(byPowerOf10: 2, withBehavior: handler)
             }
-            return UInt(number.integerValue)
+            if number.stp_isNAN() {
+                return 0
+            } else {
+                return UInt(number.intValue)
+            }
         }
         set(newAmount) {
-            let number = NSDecimalNumber(integer: Int(newAmount))
+            let number = NSDecimalNumber(value: Int(newAmount) as Int)
             self.rawString = self.formatNumber(number,
                                                convertToSuperUnit: !self.isNoDecimalCurrency,
                                                hideCentsIfZero: false)
@@ -28,26 +38,26 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
         }
     }
     @IBInspectable
-    public var currency: String = "usd" {
+    open var currency: String = "usd" {
         didSet(oldValue) {
-            var localeInfo = [NSLocaleCurrencyCode: self.currency]
-            if let language = NSLocale.preferredLanguages().first {
-                localeInfo[NSLocaleLanguageCode] = language
+            var localeInfo = [NSLocale.Key.currencyCode.rawValue: self.currency]
+            if let language = Locale.preferredLanguages.first {
+                localeInfo[NSLocale.Key.languageCode.rawValue] = language
             }
-            let localeID = NSLocale.localeIdentifierFromComponents(localeInfo)
-            let locale = NSLocale(localeIdentifier: localeID)
+            let localeID = Locale.identifier(fromComponents: localeInfo)
+            let locale = Locale(identifier: localeID)
             self.locale = locale
             self.numberFormatter = self.numberFormatter(locale)
             var number = NSDecimalNumber(string: self.rawString, locale: locale)
-            if !oldValue.isNoDecimalCurrency {
-                number = number.decimalNumberByMultiplyingByPowerOf10(self.superUnitPowerOf10)
+            if !oldValue.stp_isNoDecimalCurrency {
+                number = number.multiplying(byPowerOf10: self.superUnitPowerOf10)
             }
-            let amount = UInt(number.integerValue)
+            let amount = UInt(number.intValue)
             self.amount = amount
         }
     }
-    public var amountString: String {
-        let number = NSDecimalNumber(integer: Int(self.amount))
+    open var amountString: String {
+        let number = NSDecimalNumber(value: Int(self.amount) as Int)
         return self.formatNumber(number,
                                  usesGroupingSeparator: true,
                                  convertToSuperUnit: !self.isNoDecimalCurrency,
@@ -55,38 +65,38 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
                                  hideCurrencySymbol: false)
     }
     @IBInspectable
-    public var usesGroupingSeparator: Bool = true {
+    open var usesGroupingSeparator: Bool = true {
         didSet {
             self.refreshAttributedString()
         }
     }
     @IBInspectable
-    public var borderColor: UIColor = UIColor(white: 0.85, alpha: 1) {
-        didSet { self.layer.borderColor = self.borderColor.CGColor }
+    open var borderColor: UIColor = UIColor(white: 0.85, alpha: 1) {
+        didSet { self.layer.borderColor = self.borderColor.cgColor }
     }
     @IBInspectable
-    public var borderWidth: CGFloat = 1 {
+    open var borderWidth: CGFloat = 1 {
         didSet { self.layer.borderWidth = self.borderWidth }
     }
     @IBInspectable
-    public var cornerRadius: CGFloat = 5 {
+    open var cornerRadius: CGFloat = 5 {
         didSet { self.layer.cornerRadius = self.cornerRadius }
     }
-    public var largeFont: UIFont = UIFont.systemFontOfSize(58) {
+    open var largeFont: UIFont = UIFont.systemFont(ofSize: 58) {
         didSet { self.refreshAttributedString() }
     }
-    public var smallFont: UIFont = UIFont.systemFontOfSize(37) {
-        didSet { self.refreshAttributedString() }
-    }
-    @IBInspectable
-    public var numberColor: UIColor = UIColor.blackColor() {
+    open var smallFont: UIFont = UIFont.systemFont(ofSize: 37) {
         didSet { self.refreshAttributedString() }
     }
     @IBInspectable
-    public var currencySymbolColor: UIColor = UIColor(white: 0.54, alpha: 1) {
+    open var numberColor: UIColor = UIColor.black {
         didSet { self.refreshAttributedString() }
     }
-    override public var tintColor: UIColor! {
+    @IBInspectable
+    open var currencySymbolColor: UIColor = UIColor(white: 0.54, alpha: 1) {
+        didSet { self.refreshAttributedString() }
+    }
+    override open var tintColor: UIColor! {
         didSet {
             self.internalTextView.tintColor = self.tintColor
         }
@@ -95,19 +105,19 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
     /// MoneyTextField constrains text to its width, with margins defined by `inset`.
     /// This property also affects the size returned by `sizeThatFits`.
     @IBInspectable
-    public var inset: CGFloat = 16
+    open var inset: CGFloat = 16
 
-    private var currentEdgeInsets: UIEdgeInsets {
+    fileprivate var currentEdgeInsets: UIEdgeInsets {
         let textSize = self.internalTextView.bounds.size
         let verticalInset = (self.bounds.size.height - textSize.height)/2.0
         let horizontalInset = (self.bounds.size.width - textSize.height)/2.0
         return UIEdgeInsetsMake(verticalInset, horizontalInset, verticalInset, horizontalInset)
     }
-    private var numberFormatter = NSNumberFormatter()
-    private var locale = NSLocale.currentLocale()
-    private func numberFormatter(locale: NSLocale) -> NSNumberFormatter {
-        let formatter = NSNumberFormatter()
-        formatter.numberStyle = NSNumberFormatterStyle.CurrencyStyle
+    fileprivate var numberFormatter = NumberFormatter()
+    fileprivate var locale = Locale.current
+    fileprivate func numberFormatter(_ locale: Locale) -> NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = NumberFormatter.Style.currency
         formatter.locale = locale
         formatter.usesGroupingSeparator = true
         if formatter.minimumFractionDigits == 0 {
@@ -118,28 +128,28 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
         }
         return formatter
     }
-    private var decimalSeparator: String {
+    fileprivate var decimalSeparator: String {
         return self.numberFormatter.decimalSeparator
     }
-    private var currencySymbol: String {
+    fileprivate var currencySymbol: String {
         return self.numberFormatter.currencySymbol
     }
-    private var isNoDecimalCurrency: Bool {
-        return self.currency.isNoDecimalCurrency
+    fileprivate var isNoDecimalCurrency: Bool {
+        return self.currency.stp_isNoDecimalCurrency
     }
-    private var superUnitPowerOf10: Int16 {
+    fileprivate var superUnitPowerOf10: Int16 {
         return Int16(self.numberFormatter.minimumFractionDigits)
     }
-    private var zero: String {
-        let number = NSDecimalNumber(integer: 0)
+    fileprivate var zero: String {
+        let number = NSDecimalNumber(value: 0 as Int)
         return self.formatNumber(number, convertToSuperUnit: false, hideCentsIfZero: true)
     }
-    private var rawString = "0"
-    private let internalTextView = InternalTextView()
-    private let tapGestureRecognizer = UITapGestureRecognizer()
+    fileprivate var rawString = "0"
+    fileprivate let internalTextView = InternalTextView()
+    fileprivate let tapGestureRecognizer = UITapGestureRecognizer()
 
     public init(amount: UInt, currency: String) {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         self.setup(amount, currency: currency)
     }
 
@@ -153,12 +163,12 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
         self.setup(0, currency: "usd")
     }
 
-    private func setup(amount: UInt, currency: String) {
+    fileprivate func setup(_ amount: UInt, currency: String) {
         self.currency = currency
         self.amount = amount
         self.internalTextView.delegate = self
         self.internalTextView.internalTextViewDelegate = self
-        self.layer.borderColor = self.borderColor.CGColor
+        self.layer.borderColor = self.borderColor.cgColor
         self.layer.borderWidth = self.borderWidth
         self.layer.cornerRadius = self.cornerRadius
         self.backgroundColor = UIColor(white: 0.97, alpha: 1)
@@ -167,20 +177,20 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
         self.addGestureRecognizer(self.tapGestureRecognizer)
     }
 
-    @objc private func tapped() {
+    @objc fileprivate func tapped() {
         self.internalTextView.becomeFirstResponder()
     }
 
-    private func refreshAttributedString() {
+    fileprivate func refreshAttributedString() {
         self.internalTextView.attributedText = self.attributedString(self.rawString)
     }
 
-    private func split(amountString: String) -> (String, String?) {
+    fileprivate func split(_ amountString: String) -> (String, String?) {
         var integerPart = amountString
         var fractionalPart: String? = nil
-        if let decimalRange = amountString.rangeOfString(self.decimalSeparator) {
-            integerPart = String(amountString.characters.prefixUpTo(decimalRange.startIndex))
-            fractionalPart = String(amountString.characters.suffixFrom(decimalRange.endIndex))
+        if let decimalRange = amountString.range(of: self.decimalSeparator) {
+            integerPart = String(amountString.characters.prefix(upTo: decimalRange.lowerBound))
+            fractionalPart = String(amountString.characters.suffix(from: decimalRange.upperBound))
         }
         if integerPart.characters.isEmpty {
             integerPart = self.zero
@@ -188,7 +198,7 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
         return (integerPart, fractionalPart)
     }
 
-    private func attributedString(amountString: String) -> NSAttributedString {
+    fileprivate func attributedString(_ amountString: String) -> NSAttributedString {
         let baselinePoints = self.largeFont.pointSize - self.smallFont.pointSize
         // not sure why this multiplier is necessary (baseline offset is in points),
         // but it scales well for different font sizes.
@@ -196,7 +206,7 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
         let smallAttributes = [
             NSBaselineOffsetAttributeName: baselineOffset,
             NSFontAttributeName: self.smallFont
-        ]
+        ] as [String : Any]
         var currencyAttributes = smallAttributes
         currencyAttributes[NSForegroundColorAttributeName] = self.currencySymbolColor
         var fractionalAttributes = smallAttributes
@@ -204,14 +214,14 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
         let integerAttributes = [
             NSFontAttributeName: self.largeFont,
             NSForegroundColorAttributeName: self.numberColor
-        ]
+        ] as [String : Any]
         let string = NSMutableAttributedString(string: self.numberFormatter.currencySymbol,
                                                attributes: currencyAttributes)
         string.addAttribute(NSKernAttributeName, value: 4,
                             range: NSMakeRange(string.length - 1, 1))
         let (integerPart, fractionalPart) = self.split(amountString)
         if integerPart.characters.count > 0 {
-            let number = NSDecimalNumber(string: integerPart.sanitize(),
+            let number = NSDecimalNumber(string: integerPart.stp_sanitize(),
                                          locale: self.locale)
             let formatted = self.formatNumber(number,
                                               usesGroupingSeparator: self.usesGroupingSeparator,
@@ -219,24 +229,24 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
                                               hideCentsIfZero: true)
             let integer = NSAttributedString(string: formatted,
                                              attributes: integerAttributes)
-            string.appendAttributedString(integer)
+            string.append(integer)
         }
         if let fractional = fractionalPart {
             // using a space rather than kerning in order to make the caret resize
-            let spaceAttributes = [NSFontAttributeName: UIFont.systemFontOfSize(10)]
+            let spaceAttributes = [NSFontAttributeName: UIFont.systemFont(ofSize: 10)]
             let space = NSAttributedString(string: " ", attributes: spaceAttributes)
-            string.appendAttributedString(space)
+            string.append(space)
             let fraction = NSAttributedString(string: fractional,
                                               attributes: fractionalAttributes)
-            string.appendAttributedString(fraction)
+            string.append(fraction)
         }
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .Center
+        paragraphStyle.alignment = .center
         string.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, string.length))
         return string
     }
 
-    private func formatNumber(number: NSDecimalNumber,
+    fileprivate func formatNumber(_ number: NSDecimalNumber,
                               usesGroupingSeparator: Bool = false,
                               convertToSuperUnit: Bool,
                               hideCentsIfZero: Bool,
@@ -249,75 +259,75 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
         self.numberFormatter.usesGroupingSeparator = usesGroupingSeparator
         var superUnits = number
         if convertToSuperUnit {
-            superUnits = number.decimalNumberByMultiplyingByPowerOf10(-self.superUnitPowerOf10)
+            superUnits = number.multiplying(byPowerOf10: -self.superUnitPowerOf10)
         }
-        guard let string = self.numberFormatter.stringFromNumber(superUnits) else {
+        guard let string = self.numberFormatter.string(from: superUnits) else {
             return number.stringValue
         }
         if hideCurrencySymbol {
-            let comps = string.componentsSeparatedByString(self.numberFormatter.currencySymbol)
-            return comps.joinWithSeparator("")
+            let comps = string.components(separatedBy: self.numberFormatter.currencySymbol)
+            return comps.joined(separator: "")
         }
         else {
             return string
         }
     }
 
-    private var hasDecimalSeparator: Bool {
-        return self.rawString.rangeOfString(self.decimalSeparator) != nil
+    fileprivate var hasDecimalSeparator: Bool {
+        return self.rawString.range(of: self.decimalSeparator) != nil
     }
 
-    override public func becomeFirstResponder() -> Bool {
+    override open func becomeFirstResponder() -> Bool {
         return self.internalTextView.becomeFirstResponder()
     }
 
-    override public func resignFirstResponder() -> Bool {
+    override open func resignFirstResponder() -> Bool {
         return self.internalTextView.resignFirstResponder()
     }
 
-    override public func layoutSubviews() {
+    override open func layoutSubviews() {
         super.layoutSubviews()
-        let size = self.internalTextView.sizeThatFits(CGSizeMake(self.bounds.width, 0))
-        self.internalTextView.frame = CGRectMake(0, 0, self.bounds.width, size.height)
-        self.internalTextView.center = CGPointMake(self.bounds.midX, self.bounds.midY)
+        let size = self.internalTextView.sizeThatFits(CGSize(width: self.bounds.width, height: 0))
+        self.internalTextView.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: size.height)
+        self.internalTextView.center = CGPoint(x: self.bounds.midX, y: self.bounds.midY)
     }
 
-    override public func sizeThatFits(size: CGSize) -> CGSize {
+    override open func sizeThatFits(_ size: CGSize) -> CGSize {
         let width = self.internalTextView.attributedText.size().width + self.inset*2
-        let height = self.largeFont.height + self.inset*2
-        return CGSizeMake(width, height)
+        let height = self.largeFont.stp_height + self.inset*2
+        return CGSize(width: width, height: height)
     }
 
     // MARK: InternalTextViewDelegate
-    private func internalTextView(textView: InternalTextView, modifiedCaretRect rect: CGRect) -> CGRect {
+    fileprivate func internalTextView(_ textView: InternalTextView, modifiedCaretRect rect: CGRect) -> CGRect {
         var newRect = rect
         var topInset = self.currentEdgeInsets.top
         if topInset < 0 {
             topInset = self.inset - topInset
         }
-        newRect.origin = CGPointMake(rect.origin.x, topInset)
+        newRect.origin = CGPoint(x: rect.origin.x, y: topInset)
         if self.hasDecimalSeparator {
-            newRect.size = CGSizeMake(rect.width, self.smallFont.height)
+            newRect.size = CGSize(width: rect.width, height: self.smallFont.stp_height)
         }
         else {
-            newRect.size = CGSizeMake(rect.width, self.largeFont.height)
+            newRect.size = CGSize(width: rect.width, height: self.largeFont.stp_height)
         }
         return newRect
     }
 
     // MARK: UITextViewDelegate
-    public func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+    open func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         var newRawString = self.rawString
         let deleting = range.location == textView.text.characters.count - 1 && range.length == 1 && text == ""
         if deleting {
             if newRawString.characters.count > 0 {
-                var lastIndex = newRawString.endIndex.predecessor()
+                var lastIndex = newRawString.characters.index(before: newRawString.endIndex)
                 // delete over the decimal separator
                 if String(newRawString[lastIndex]) == self.decimalSeparator &&
                     newRawString.characters.count > 1 {
-                    lastIndex = lastIndex.predecessor()
+                    lastIndex = newRawString.characters.index(before: lastIndex)
                 }
-                newRawString = newRawString.substringToIndex(lastIndex)
+                newRawString = newRawString.substring(to: lastIndex)
                 if newRawString.characters.isEmpty {
                     newRawString = self.zero
                 }
@@ -329,7 +339,7 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
             }
             else {
                 let (integerPart, fractionalPart) = self.split(newRawString)
-                let sanitized = text.sanitize()
+                let sanitized = text.stp_sanitize()
                 if let fractional = fractionalPart {
                     if fractional.characters.count < self.numberFormatter.minimumFractionDigits {
                         newRawString = integerPart + self.decimalSeparator + fractional + sanitized
@@ -345,7 +355,7 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
         if newWidth < self.bounds.width && newRawString != self.rawString {
             textView.attributedText = attrString
             self.rawString = newRawString
-            self.sendActionsForControlEvents(.ValueChanged)
+            self.sendActions(for: .valueChanged)
         }
         return false
     }
@@ -353,19 +363,19 @@ public class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDele
 }
 
 private protocol InternalTextViewDelegate {
-    func internalTextView(textView: InternalTextView, modifiedCaretRect rect: CGRect) -> CGRect
+    func internalTextView(_ textView: InternalTextView, modifiedCaretRect rect: CGRect) -> CGRect
 }
 
 private class InternalTextView: UITextView, UITextViewDelegate {
     var internalTextViewDelegate: InternalTextViewDelegate?
 
     init() {
-        super.init(frame: CGRectZero, textContainer: nil)
-        self.scrollEnabled = false
-        self.keyboardType = .DecimalPad
-        self.textAlignment = .Natural
-        self.userInteractionEnabled = false
-        self.backgroundColor = UIColor.clearColor()
+        super.init(frame: CGRect.zero, textContainer: nil)
+        self.isScrollEnabled = false
+        self.keyboardType = .decimalPad
+        self.textAlignment = .natural
+        self.isUserInteractionEnabled = false
+        self.backgroundColor = UIColor.clear
         self.delegate = self
     }
 
@@ -373,8 +383,8 @@ private class InternalTextView: UITextView, UITextViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func caretRectForPosition(position: UITextPosition) -> CGRect {
-        let rect = super.caretRectForPosition(position)
+    override func caretRect(for position: UITextPosition) -> CGRect {
+        let rect = super.caretRect(for: position)
         if let delegate = self.internalTextViewDelegate {
             return delegate.internalTextView(self, modifiedCaretRect:rect)
         }
@@ -385,27 +395,37 @@ private class InternalTextView: UITextView, UITextViewDelegate {
 }
 
 private extension String {
-    var isNoDecimalCurrency: Bool {
+    var stp_isNoDecimalCurrency: Bool {
         let currencies = ["bif", "clp","djf","gnf",
                           "jpy","kmf","krw","mga","pyg","rwf","vnd",
                           "vuv","xaf","xof","xpf"]
-        return currencies.contains(self.lowercaseString)
+        return currencies.contains(self.lowercased())
     }
 
-    func sanitize() -> String {
-        let set = NSCharacterSet.decimalDigitCharacterSet()
-        let components = self.componentsSeparatedByCharactersInSet(set.invertedSet)
-        return components.joinWithSeparator("")
+    func stp_sanitize() -> String {
+        let set = CharacterSet.decimalDigits
+        let components = self.components(separatedBy: set.inverted)
+        return components.joined(separator: "")
     }
 }
 
 private extension UIFont {
-    var height: CGFloat {
+    var stp_height: CGFloat {
         let string: NSString = "0"
-        let rect = string.boundingRectWithSize(CGSizeZero,
-                                               options: .UsesDeviceMetrics,
+        let rect = string.boundingRect(with: CGSize.zero,
+                                               options: .usesDeviceMetrics,
                                                attributes: [NSFontAttributeName: self],
                                                context: nil)
         return rect.size.height
+    }
+}
+
+private extension NSDecimalNumber {
+    func stp_isZero() -> Bool {
+        return NSDecimalNumber.zero.isEqual(to: self)
+    }
+
+    func stp_isNAN() -> Bool {
+        return NSDecimalNumber.notANumber.isEqual(to: self)
     }
 }

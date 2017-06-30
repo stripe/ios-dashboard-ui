@@ -11,6 +11,11 @@ import FBSnapshotTestCase
 import StripeDashboardUI
 
 class MoneyTextFieldTests: FBSnapshotTestCase {
+
+    override func setUp() {
+        super.setUp()
+//        self.recordMode = true
+    }
     
     func testInit() {
         var sut = MoneyTextField(amount: 100000, currency: "usd")

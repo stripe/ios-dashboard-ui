@@ -17,12 +17,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tap))
         self.view.addGestureRecognizer(tapGestureRecognizer)
-        self.moneyTextField.addTarget(self, action: #selector(amountChanged), forControlEvents: .ValueChanged)
+        self.moneyTextField.addTarget(self, action: #selector(amountChanged), for: .valueChanged)
         // Do any additional setup after loading the view, typically from a nib.
     }
 
     func tap() {
-        self.moneyTextField.resignFirstResponder()
+        let _ = self.moneyTextField.resignFirstResponder()
     }
 
     func amountChanged() {
