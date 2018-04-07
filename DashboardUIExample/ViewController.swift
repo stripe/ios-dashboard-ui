@@ -21,11 +21,11 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
     }
 
-    func tap() {
+    @objc func tap() {
         let _ = self.moneyTextField.resignFirstResponder()
     }
 
-    func amountChanged() {
+    @objc func amountChanged() {
         print(self.moneyTextField.amountString)
     }
 
