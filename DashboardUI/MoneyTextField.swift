@@ -189,10 +189,10 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         var integerPart = amountString
         var fractionalPart: String? = nil
         if let decimalRange = amountString.range(of: self.decimalSeparator) {
-            integerPart = String(amountString.characters.prefix(upTo: decimalRange.lowerBound))
-            fractionalPart = String(amountString.characters.suffix(from: decimalRange.upperBound))
+            integerPart = String(amountString.prefix(upTo: decimalRange.lowerBound))
+            fractionalPart = String(amountString.suffix(from: decimalRange.upperBound))
         }
-        if integerPart.characters.isEmpty {
+        if integerPart.isEmpty {
             integerPart = self.zero
         }
         return (integerPart, fractionalPart)
@@ -203,24 +203,26 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         // not sure why this multiplier is necessary (baseline offset is in points),
         // but it scales well for different font sizes.
         let baselineOffset = baselinePoints*0.7
-        let smallAttributes = [
-            NSBaselineOffsetAttributeName: baselineOffset,
-            NSFontAttributeName: self.smallFont
-        ] as [String : Any]
+        let smallAttributes: [NSAttributedStringKey : Any]?
+        smallAttributes = [
+            NSAttributedStringKey(rawValue: NSAttributedStringKey.baselineOffset.rawValue): baselineOffset,
+            NSAttributedStringKey.font: self.smallFont
+        ]
         var currencyAttributes = smallAttributes
-        currencyAttributes[NSForegroundColorAttributeName] = self.currencySymbolColor
+        currencyAttributes![NSAttributedStringKey.foregroundColor] = self.currencySymbolColor
         var fractionalAttributes = smallAttributes
-        fractionalAttributes[NSForegroundColorAttributeName] = self.numberColor
-        let integerAttributes = [
-            NSFontAttributeName: self.largeFont,
-            NSForegroundColorAttributeName: self.numberColor
-        ] as [String : Any]
+        fractionalAttributes![NSAttributedStringKey.foregroundColor] = self.numberColor
+        let integerAttributes: [NSAttributedStringKey : Any]?
+        integerAttributes = [
+            NSAttributedStringKey(rawValue: NSAttributedStringKey.font.rawValue): self.largeFont,
+            NSAttributedStringKey.foregroundColor: self.numberColor
+        ]
         let string = NSMutableAttributedString(string: self.numberFormatter.currencySymbol,
                                                attributes: currencyAttributes)
-        string.addAttribute(NSKernAttributeName, value: 4,
+        string.addAttribute(NSAttributedStringKey.kern, value: 4,
                             range: NSMakeRange(string.length - 1, 1))
         let (integerPart, fractionalPart) = self.split(amountString)
-        if integerPart.characters.count > 0 {
+        if integerPart.count > 0 {
             let number = NSDecimalNumber(string: integerPart.stp_sanitize(),
                                          locale: self.locale)
             let formatted = self.formatNumber(number,
@@ -233,7 +235,7 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         }
         if let fractional = fractionalPart {
             // using a space rather than kerning in order to make the caret resize
-            let spaceAttributes = [NSFontAttributeName: UIFont.systemFont(ofSize: 10)]
+            let spaceAttributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 10)]
             let space = NSAttributedString(string: " ", attributes: spaceAttributes)
             string.append(space)
             let fraction = NSAttributedString(string: fractional,
@@ -242,7 +244,7 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         }
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        string.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, string.length))
+        string.addAttribute(NSAttributedStringKey.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, string.length))
         return string
     }
 
@@ -318,17 +320,17 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
     // MARK: UITextViewDelegate
     open func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         var newRawString = self.rawString
-        let deleting = range.location == textView.text.characters.count - 1 && range.length == 1 && text == ""
+        let deleting = range.location == textView.text.count - 1 && range.length == 1 && text == ""
         if deleting {
-            if newRawString.characters.count > 0 {
-                var lastIndex = newRawString.characters.index(before: newRawString.endIndex)
+            if newRawString.count > 0 {
+                var lastIndex = newRawString.index(before: newRawString.endIndex)
                 // delete over the decimal separator
                 if String(newRawString[lastIndex]) == self.decimalSeparator &&
-                    newRawString.characters.count > 1 {
-                    lastIndex = newRawString.characters.index(before: lastIndex)
+                    newRawString.count > 1 {
+                    lastIndex = newRawString.index(before: lastIndex)
                 }
-                newRawString = newRawString.substring(to: lastIndex)
-                if newRawString.characters.isEmpty {
+                newRawString = String(newRawString[..<lastIndex])
+                if newRawString.isEmpty {
                     newRawString = self.zero
                 }
             }
@@ -341,7 +343,7 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
                 let (integerPart, fractionalPart) = self.split(newRawString)
                 let sanitized = text.stp_sanitize()
                 if let fractional = fractionalPart {
-                    if fractional.characters.count < self.numberFormatter.minimumFractionDigits {
+                    if fractional.count < self.numberFormatter.minimumFractionDigits {
                         newRawString = integerPart + self.decimalSeparator + fractional + sanitized
                     }
                 }
@@ -414,7 +416,7 @@ private extension UIFont {
         let string: NSString = "0"
         let rect = string.boundingRect(with: CGSize.zero,
                                                options: .usesDeviceMetrics,
-                                               attributes: [NSFontAttributeName: self],
+                                               attributes: [NSAttributedStringKey.font: self],
                                                context: nil)
         return rect.size.height
     }

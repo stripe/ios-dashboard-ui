@@ -15,7 +15,7 @@ This is a collection of UI components used in the [Stripe Dashboard](https://itu
 * Manual
   * drag source files from the `DashboardUI` directory into your project.
 
-Swift 3
+Swift 4
 
 ## Components
 ### MoneyTextField
