@@ -205,21 +205,21 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         let baselineOffset = baselinePoints*0.7
         let smallAttributes: [NSAttributedString.Key : Any]?
         smallAttributes = [
-            NSAttributedString.Key(rawValue: NSAttributedString.Key.baselineOffset.rawValue): baselineOffset,
-            NSAttributedString.Key.font: self.smallFont
+            .baselineOffset: baselineOffset,
+            .font: self.smallFont
         ]
         var currencyAttributes = smallAttributes
-        currencyAttributes![NSAttributedString.Key.foregroundColor] = self.currencySymbolColor
+        currencyAttributes![.foregroundColor] = self.currencySymbolColor
         var fractionalAttributes = smallAttributes
-        fractionalAttributes![NSAttributedString.Key.foregroundColor] = self.numberColor
+        fractionalAttributes![.foregroundColor] = self.numberColor
         let integerAttributes: [NSAttributedString.Key : Any]?
         integerAttributes = [
-            NSAttributedString.Key(rawValue: NSAttributedString.Key.font.rawValue): self.largeFont,
-            NSAttributedString.Key.foregroundColor: self.numberColor
+            .font: self.largeFont,
+            .foregroundColor: self.numberColor
         ]
         let string = NSMutableAttributedString(string: self.numberFormatter.currencySymbol,
                                                attributes: currencyAttributes)
-        string.addAttribute(NSAttributedString.Key.kern, value: 4,
+        string.addAttribute(.kern, value: 4,
                             range: NSMakeRange(string.length - 1, 1))
         let (integerPart, fractionalPart) = self.split(amountString)
         if integerPart.count > 0 {
@@ -244,7 +244,7 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         }
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        string.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, string.length))
+        string.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, string.length))
         return string
     }
 
@@ -416,7 +416,7 @@ private extension UIFont {
         let string: NSString = "0"
         let rect = string.boundingRect(with: CGSize.zero,
                                                options: .usesDeviceMetrics,
-                                               attributes: [NSAttributedString.Key.font: self],
+                                               attributes: [.font: self],
                                                context: nil)
         return rect.size.height
     }
