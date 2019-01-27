@@ -220,7 +220,7 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         let string = NSMutableAttributedString(string: self.numberFormatter.currencySymbol,
                                                attributes: currencyAttributes)
         string.addAttribute(.kern, value: 4,
-                            range: NSMakeRange(string.length - 1, 1))
+                            range: NSRange(location: string.length - 1, length: 1))
         let (integerPart, fractionalPart) = self.split(amountString)
         if integerPart.count > 0 {
             let number = NSDecimalNumber(string: integerPart.stp_sanitize(),
@@ -244,7 +244,7 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         }
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        string.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, string.length))
+        string.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: string.length))
         return string
     }
 
