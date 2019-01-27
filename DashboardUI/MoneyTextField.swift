@@ -111,7 +111,7 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         let textSize = self.internalTextView.bounds.size
         let verticalInset = (self.bounds.size.height - textSize.height)/2.0
         let horizontalInset = (self.bounds.size.width - textSize.height)/2.0
-        return UIEdgeInsetsMake(verticalInset, horizontalInset, verticalInset, horizontalInset)
+        return UIEdgeInsets(top: verticalInset, left: horizontalInset, bottom: verticalInset, right: horizontalInset)
     }
     fileprivate var numberFormatter = NumberFormatter()
     fileprivate var locale = Locale.current
@@ -203,23 +203,23 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         // not sure why this multiplier is necessary (baseline offset is in points),
         // but it scales well for different font sizes.
         let baselineOffset = baselinePoints*0.7
-        let smallAttributes: [NSAttributedStringKey : Any]?
+        let smallAttributes: [NSAttributedString.Key : Any]?
         smallAttributes = [
-            NSAttributedStringKey(rawValue: NSAttributedStringKey.baselineOffset.rawValue): baselineOffset,
-            NSAttributedStringKey.font: self.smallFont
+            NSAttributedString.Key(rawValue: NSAttributedString.Key.baselineOffset.rawValue): baselineOffset,
+            NSAttributedString.Key.font: self.smallFont
         ]
         var currencyAttributes = smallAttributes
-        currencyAttributes![NSAttributedStringKey.foregroundColor] = self.currencySymbolColor
+        currencyAttributes![NSAttributedString.Key.foregroundColor] = self.currencySymbolColor
         var fractionalAttributes = smallAttributes
-        fractionalAttributes![NSAttributedStringKey.foregroundColor] = self.numberColor
-        let integerAttributes: [NSAttributedStringKey : Any]?
+        fractionalAttributes![NSAttributedString.Key.foregroundColor] = self.numberColor
+        let integerAttributes: [NSAttributedString.Key : Any]?
         integerAttributes = [
-            NSAttributedStringKey(rawValue: NSAttributedStringKey.font.rawValue): self.largeFont,
-            NSAttributedStringKey.foregroundColor: self.numberColor
+            NSAttributedString.Key(rawValue: NSAttributedString.Key.font.rawValue): self.largeFont,
+            NSAttributedString.Key.foregroundColor: self.numberColor
         ]
         let string = NSMutableAttributedString(string: self.numberFormatter.currencySymbol,
                                                attributes: currencyAttributes)
-        string.addAttribute(NSAttributedStringKey.kern, value: 4,
+        string.addAttribute(NSAttributedString.Key.kern, value: 4,
                             range: NSMakeRange(string.length - 1, 1))
         let (integerPart, fractionalPart) = self.split(amountString)
         if integerPart.count > 0 {
@@ -235,7 +235,7 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         }
         if let fractional = fractionalPart {
             // using a space rather than kerning in order to make the caret resize
-            let spaceAttributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 10)]
+            let spaceAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10)]
             let space = NSAttributedString(string: " ", attributes: spaceAttributes)
             string.append(space)
             let fraction = NSAttributedString(string: fractional,
@@ -244,7 +244,7 @@ open class MoneyTextField: UIControl, UITextViewDelegate, InternalTextViewDelega
         }
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        string.addAttribute(NSAttributedStringKey.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, string.length))
+        string.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, string.length))
         return string
     }
 
@@ -416,7 +416,7 @@ private extension UIFont {
         let string: NSString = "0"
         let rect = string.boundingRect(with: CGSize.zero,
                                                options: .usesDeviceMetrics,
-                                               attributes: [NSAttributedStringKey.font: self],
+                                               attributes: [NSAttributedString.Key.font: self],
                                                context: nil)
         return rect.size.height
     }
