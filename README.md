@@ -14,6 +14,8 @@ This is a collection of UI components used in the [Stripe Dashboard](https://itu
   * `github "stripe/ios-dashboard-ui"`
 * Manual
   * drag source files from the `DashboardUI` directory into your project.
+* Development
+  * Run `make bootstrap` to install dependencies.
 
 Swift 4
 
