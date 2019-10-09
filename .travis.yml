@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode10.1
+osx_image: xcode9.2
 before_install:
   - ./scripts/install_dependencies.sh
 script:
