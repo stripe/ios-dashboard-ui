@@ -1,11 +1,13 @@
 # iOS Dashboard UI
-[![Travis](https://img.shields.io/travis/stripe/ios-dashboard-ui/master.svg?style=flat)](https://travis-ci.org/stripe/ios-dashboard-ui)
+## Archived
+This repository is no longer under active development or maintenance
+
 [![CocoaPods](https://img.shields.io/cocoapods/v/StripeDashboardUI.svg?style=flat)](http://cocoapods.org/?q=name%3Astripedashboardui)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![CocoaPods](https://img.shields.io/cocoapods/l/StripeDashboardUI.svg?style=flat)](https://github.com/stripe/ios-dashboard-ui/blob/master/LICENSE)
 [![CocoaPods](https://img.shields.io/cocoapods/p/StripeDashboardUI.svg?style=flat)](https://github.com/stripe/ios-dashboard-ui#)
 
-This is a collection of UI components used in the [Stripe Dashboard](https://itunes.apple.com/us/app/stripe-dashboard/id978516833?mt=8). Currently, it only contains one component, `MoneyTextField`, but there's more to come!
+This is a collection of UI components used in the [Stripe Dashboard](https://itunes.apple.com/us/app/stripe-dashboard/id978516833?mt=8). Currently, it contains one component, `MoneyTextField`.
 
 ## Installation
 * [Cocoapods](https://cocoapods.org/pods/StripeDashboardUI)
