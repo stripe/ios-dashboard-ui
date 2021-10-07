@@ -1,6 +1,0 @@
-language: objective-c
-osx_image: xcode10.1
-before_install:
-  - ./scripts/install_dependencies.sh
-script:
-  - ./scripts/run_tests.sh
